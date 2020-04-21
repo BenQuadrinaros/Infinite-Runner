@@ -33,6 +33,7 @@ class Menu extends Phaser.Scene {
 
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        //left mouse click assignment
 
         //launches next scene
         //this.scene.start("playScene");
@@ -40,10 +41,10 @@ class Menu extends Phaser.Scene {
 
     update() {
         if(Phaser.Input.Keyboard.JustDown(keyUP)) {
-            
+            this.scene.start("playScene");
         }
         if(Phaser.Input.Keyboard.JustDown(keyDOWN)) {
-            
+            this.scene.start("instructionScene");
         }
     }
 }
