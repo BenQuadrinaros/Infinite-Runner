@@ -11,7 +11,7 @@ class Menu extends Phaser.Scene {
     create() {
         let menuConfig = {
             fontFamily: "Courier", 
-            fontSize: "26px",
+            fontSize: "32px",
             backgroundColor: "#F3B141",
             color: "#843605",
             align: "right",
@@ -26,10 +26,11 @@ class Menu extends Phaser.Scene {
         let centerY = game.config.height/2;
         let textSpacer = 64;
 
-        this.add.text(centerX, centerY - textSpacer, "Alpine Adventure", menuConfig).setOrigin(.5);
-        menuConfig.backgroundColor = "#00FF00";
-        menuConfig.color = "#000";
-        //this.add.text(centerX, centerY + textSpacer, "Press <- for Easy and  -> for Hard", menuConfig).setOrigin(.5);
+        // (↑) & (↓)
+        menuConfig.fontSize = "26px";
+        this.add.text(centerX, centerY - (1.5*textSpacer), "Alpine Adventure", menuConfig).setOrigin(.5);
+        this.add.text(centerX, centerY + textSpacer, "Press (↑) to start Alpine Adventure.", menuConfig).setOrigin(.5);
+        this.add.text(centerX, centerY + (2*textSpacer), "Press (↓) for gameplay instructions.", menuConfig).setOrigin(.5);
 
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
