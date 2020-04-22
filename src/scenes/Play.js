@@ -1,4 +1,4 @@
-class Instructions extends Phaser.Scene {
+class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
     }
@@ -8,6 +8,8 @@ class Instructions extends Phaser.Scene {
     }
 
     create() {
+        game.input.mouse.capture = true;
+
         //place backgrounds
 
         //place assets into the scene
@@ -15,7 +17,9 @@ class Instructions extends Phaser.Scene {
 
     update() {
         //shift everything on screen
-
+        if(game.input.mousePointer.isDown) {
+            console.log("mouseX " + game.input.mousePointer.x + " mouse:Y " + game.input.mousePointer.y);
+        }
         //check collisions
 
         //move items that have fallen off the screen
