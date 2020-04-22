@@ -27,10 +27,11 @@ class Menu extends Phaser.Scene {
         let textSpacer = 64;
 
         // (↑) & (↓)
-        menuConfig.fontSize = "26px";
-        this.add.text(centerX, centerY - (1.5*textSpacer), "Alpine Adventure", menuConfig).setOrigin(.5);
-        this.playText = this.add.text(centerX, centerY + textSpacer, "Press (↑) to start Alpine Adventure.", menuConfig).setOrigin(.5).setInteractive();
-        this.instructionsText = this.add.text(centerX, centerY + (2*textSpacer), "Press (↓) for gameplay instructions.", menuConfig).setOrigin(.5).setInteractive();
+        menuConfig.fontSize = "48px";
+        this.add.text(centerX, centerY - (2.5*textSpacer), "Alpine Adventure", menuConfig).setOrigin(.5);
+        menuConfig.fontSize = "32px";
+        this.playText = this.add.text(centerX, centerY + textSpacer, "Click here or press (↑) \nto start Alpine Adventure.", menuConfig).setOrigin(.5).setInteractive();
+        this.instructionsText = this.add.text(centerX, centerY + (2.5*textSpacer), "Click here or press (↓) \nfor gameplay instructions.", menuConfig).setOrigin(.5).setInteractive();
 
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
@@ -44,15 +45,16 @@ class Menu extends Phaser.Scene {
     }
 
     update() {
-        this.playText.on('pointerdown',() => {
-            this.scene.start("playScene");
-        });
+        
         if(Phaser.Input.Keyboard.JustDown(keyUP)) {
             this.scene.start("playScene");
         }
         if(Phaser.Input.Keyboard.JustDown(keyDOWN)) {
             this.scene.start("instructionScene");
         }
+        this.playText.on('pointerdown',() => {
+            this.scene.start("playScene");
+        });
         this.instructionsText.on('pointerdown',() => {
             this.scene.start("instructionScene");
         });

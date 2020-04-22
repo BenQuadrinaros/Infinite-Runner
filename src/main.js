@@ -11,6 +11,7 @@ let game = new Phaser.Game(config);
 
 game.settings = {
     backgroundSpeed: 3,
+    scrollSpeed: 2,
     gameTimer: 60000,
 };
 

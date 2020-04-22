@@ -22,11 +22,12 @@ class Instructions extends Phaser.Scene {
         let textSpacer = 64;
 
         //(↑) & (↓)
-        this.add.text(centerX, centerY + (2*textSpacer), "Use (↑) & (↓) arrows or (W) & (S) keys\nto move and (Left Mouse Click) to Fire", menuConfig).setOrigin(.5);
+        this.add.text(centerX, centerY + (2.5*textSpacer), "Use (↑) & (↓) arrows or (W) & (S) keys\nto move and (Left Mouse Click) to Fire", menuConfig).setOrigin(.5);
         this.add.text(centerX, centerY, "Ski through gates to earn points.", menuConfig).setOrigin(.5);
-        this.add.text(centerX, centerY - textSpacer, "Shoot the targets to get more time.", menuConfig).setOrigin(.5);
-        this.add.text(centerX, centerY - (2*textSpacer), "Avoid obstacles to avoid losing time.", menuConfig).setOrigin(.5);
-        this.add.text(centerX, centerY - (3.5*textSpacer), "Press (↓) to go back to the menu.", menuConfig).setOrigin(.5);
+        this.add.text(centerX, centerY - (.5*textSpacer), "Shoot the targets to get more time.", menuConfig).setOrigin(.5);
+        this.add.text(centerX, centerY - (1.5*textSpacer), "Avoid obstacles to avoid losing time.", menuConfig).setOrigin(.5);
+        menuConfig.fontSize = "32px";
+        this.backText = this.add.text(centerX, centerY - (3*textSpacer), "Click here or press (↓)\nto go back to the menu.", menuConfig).setOrigin(.5).setInteractive();
 
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     }
@@ -35,5 +36,8 @@ class Instructions extends Phaser.Scene {
         if(Phaser.Input.Keyboard.JustDown(keyDOWN)) {
             this.scene.start("menuScene");
         }
+        this.backText.on('pointerdown',() => {
+            this.scene.start("menuScene");
+        });
     }
 }
