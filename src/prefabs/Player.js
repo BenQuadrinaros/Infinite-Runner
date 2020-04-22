@@ -8,18 +8,18 @@ class Player extends Phaser.GameObjects.Sprite {
 
     update(){
         //w or up Arrow - move up
-        if (Phaser.Input.Keyboard.JustDown(keyUP)||Phaser.Input.Keyboard.JustDown(keyW)){
+        if (keyUP.isDown || keyW.isDown){
             //make sure player stays in bottom half of screen
-            if (this.y <=game.config.height/2){
+            if (this.y >game.config.height/2 + 30){
             //move player up
-             this.y+=this.moveDistance;
+             this.y-=this.moveDistance;
             }
         }
         //s key or down arrow - move down
-        if (Phaser.Input.Keyboard.JustDown(keyDOWN) || Phaser.Input.Keyboard.JustDown(keyS)){
+        if (keyDOWN.isDown || keyS.isDown){
             //make sure player does not go off screen
-            if (this.y<=game.config.height){
-                this.y-=this.moveDistance;
+            if (this.y<=game.config.height-30){
+                this.y+=this.moveDistance;
             }
         }
     }

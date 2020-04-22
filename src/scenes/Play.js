@@ -29,6 +29,14 @@ class Play extends Phaser.Scene {
         this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'treeBG').setOrigin(0,0).setScale(1.25,1.25);
         this.snow = this.add.tileSprite(0,game.config.height/4,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(2.1,2.1);
 
+
+
+        //keys for movement
+        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+
         //add top-border for UI
         this.add.rectangle(0,0,640,110,0x151565).setOrigin(0,0);
         let scoreConfig = {
@@ -73,6 +81,7 @@ class Play extends Phaser.Scene {
             this.faster = 500;
             game.settings.scrollSpeed++;
         }
+        this.p1.update();
 
         //check mouse click
         if(game.input.mousePointer.isDown) {
