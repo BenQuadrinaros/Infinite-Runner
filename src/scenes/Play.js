@@ -5,14 +5,14 @@ class Play extends Phaser.Scene {
 
     preload() {
         //load up all assets and animations
-        this.load.image('skyBG','../../assets/art/SkyBackground.jpg');
-        this.load.image('treeBG','../../assets/art/treeBackgrounLayer.png');
-        this.load.image('mountainBG','../../assets/art/mountainBackgrounLayer.png');
-        this.load.image('snowGround','../../assets/art/snowLayer.png');
-        this.load.image('player','../../assets/art/player.png');
-        this.load.image('obstacle','../../assets/art/obstacle.png');
-        this.load.image('gate','../../assets/art/slalomGate.png');
-        this.load.image('target','../../assets/art/target.png');
+        this.load.image('skyBG','./assets/art/SkyBackground.jpg');
+        this.load.image('treeBG','./assets/art/treeBackgrounLayer.png');
+        this.load.image('mountainBG','./assets/art/mountainBackgrounLayer.png');
+        this.load.image('snowGround','./assets/art/snowLayer.png');
+        this.load.image('player','./assets/art/player.png');
+        this.load.image('obstacle','./assets/art/obstacle.png');
+        this.load.image('gate','./assets/art/slalomGate.png');
+        this.load.image('target','./assets/art/target.png');
 
         //load audio
         //this.load.audio("sfx_select", "./assets/blip_select12.wav");
