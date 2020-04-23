@@ -56,7 +56,6 @@ class Menu extends Phaser.Scene {
             this.scene.start("playScene");
         });
         this.instructionsText.on('pointerdown',() => {
-
                 this.scene.start("instructionScene");
         });
     }

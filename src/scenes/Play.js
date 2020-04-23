@@ -23,6 +23,16 @@ class Play extends Phaser.Scene {
         game.input.mouse.capture = true;
         this.faster = 500;
 
+        //timer variables
+        this.totalTime = 5;
+        this.timer =  this.time.addEvent({
+            delay:this.totalTime*1000,
+            callback: () => {console.log("game over")},
+            loop:false,
+            callbackScope:this
+        });
+
+
         //place backgrounds
         //this.starfield = this.add.tileSprite(0,0,640,480,"starfield").setOrigin(0,0);
         this.skyBG = this.add.tileSprite(0,0,640,480,'skyBG').setOrigin(0,0);
@@ -54,6 +64,10 @@ class Play extends Phaser.Scene {
         };
         this.p1Score = 0;
         this.scoreLeft = this.add.text(69, 54, this.p1Score, scoreConfig);
+
+
+        //place timer
+        this.timeLeft = this.add.text(game.config.width-100, 54, this.timer.delay, scoreConfig);
         
         //place assets into the scene
         //player object
@@ -107,12 +121,12 @@ class Play extends Phaser.Scene {
         this.tar1.update();
 
         //check mouse click
-        if(game.input.mousePointer.isDown) {
-            if (mouseDown) {
-                console.log("mouseX " + game.input.mousePointer.x + " mouse:Y " + game.input.mousePointer.y);
-            }
-            mouseDown = false;
-        }
+        // if(game.input.mousePointer.isDown) {
+        //     if (mouseDown) {
+        //         console.log("mouseX " + game.input.mousePointer.x + " mouse:Y " + game.input.mousePointer.y);
+        //     }
+        //     mouseDown = false;
+        // }
 
         if (!game.input.mousePointer.isDown){
             mouseDown = true;
@@ -121,10 +135,15 @@ class Play extends Phaser.Scene {
         this.tar1.on('pointerdown',() =>{
             if (mouseDown) {
                 console.log('targetHit!');
+                this.timer.delay+=5000;
+                this.totalTime+=5;
                 this.tar1.reset();
             }
             mouseDown = false;
         });
+
+        //update timer
+        this.timeLeft.text = this.totalTime - this.timer.getElapsedSeconds();
 
         //check collisions
         if(this.checkCollisionsObs(this.p1, this.obs1)) {
@@ -172,5 +191,9 @@ class Play extends Phaser.Scene {
             player.y < gate.y + gate.height && player.y + player.height > gate.y) {
             return true;
         }
+    }
+
+    gameOver(){
+    console.log("Game Over");
     }
 }
