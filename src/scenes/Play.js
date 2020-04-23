@@ -108,12 +108,22 @@ class Play extends Phaser.Scene {
 
         //check mouse click
         if(game.input.mousePointer.isDown) {
-            console.log("mouseX " + game.input.mousePointer.x + " mouse:Y " + game.input.mousePointer.y);
+            if (mouseDown) {
+                console.log("mouseX " + game.input.mousePointer.x + " mouse:Y " + game.input.mousePointer.y);
+            }
+            mouseDown = false;
+        }
+
+        if (!game.input.mousePointer.isDown){
+            mouseDown = true;
         }
 
         this.tar1.on('pointerdown',() =>{
-         console.log('targetHit!');
-         this.tar1.reset();
+            if (mouseDown) {
+                console.log('targetHit!');
+                this.tar1.reset();
+            }
+            mouseDown = false;
         });
 
         //check collisions

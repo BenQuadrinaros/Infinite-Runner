@@ -47,7 +47,7 @@ class Menu extends Phaser.Scene {
     update() {
         
         if(Phaser.Input.Keyboard.JustDown(keyUP)) {
-            this.scene.start("playScene");
+                this.scene.start("playScene");
         }
         if(Phaser.Input.Keyboard.JustDown(keyDOWN)) {
             this.scene.start("instructionScene");
@@ -56,7 +56,8 @@ class Menu extends Phaser.Scene {
             this.scene.start("playScene");
         });
         this.instructionsText.on('pointerdown',() => {
-            this.scene.start("instructionScene");
+
+                this.scene.start("instructionScene");
         });
     }
 }
