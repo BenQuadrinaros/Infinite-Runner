@@ -56,7 +56,9 @@ class Play extends Phaser.Scene {
         this.scoreLeft = this.add.text(69, 54, this.p1Score, scoreConfig);
         
         //place assets into the scene
-        this.p1 = new Player(this,20,game.config.height-100,'player').setOrigin(0,0);
+        //player object
+        this.p1 = new Player(this,40,game.config.height-100,'player').setOrigin(0,0);
+
         this.obs1 = new Obstacle(this,0,0,'obstacle').setOrigin(0,0);
         this.obs1.setScale(3, 1.5);
         this.obs1.reset();
@@ -136,10 +138,12 @@ class Play extends Phaser.Scene {
         if(this.checkCollisionGate(this.p1, this.gate1)) {
             this.p1Score += 10;
             this.gate1.enabled = false;
+            this.scoreLeft.text = this.p1Score;
         }
         if(this.checkCollisionGate(this.p1, this.gate2)) {
             this.p1Score += 10;
             this.gate2.enabled = false;
+            this.scoreLeft.text = this.p1Score;
         }
     }
 
