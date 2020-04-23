@@ -75,9 +75,11 @@ class Play extends Phaser.Scene {
         this.gate2.reset();
         this.gate2.x += 90 + Math.round(Math.random() * 100);
 
-        this.tar1 = new Target(this,0,0,'target',0).setOrigin(0,0).setInteractive();
+        this.tar1 = new Target(this,0,0,'target',0,1).setOrigin(0,0).setInteractive();
         this.tar1.reset();
 
+        this.tar2 = new Target(this,0,0,'target',0,0).setOrigin(0,0).setInteractive();
+        this.tar2.reset();
         //player object
         this.p1 = new Player(this,40,game.config.height-100,'player').setOrigin(0,0);
 
@@ -123,6 +125,7 @@ class Play extends Phaser.Scene {
             this.gate1.update();
             this.gate2.update();
             this.tar1.update();
+            this.tar2.update();
 
             if (!game.input.mousePointer.isDown){
                 mouseDown = true;
@@ -134,6 +137,16 @@ class Play extends Phaser.Scene {
                     this.timer.delay+=5000;
                     this.totalTime+=5;
                     this.tar1.reset();
+                }
+                mouseDown = false;
+            });
+
+            this.tar2.on('pointerdown',() =>{
+                if (mouseDown) {
+                    console.log('targetHit!');
+                    this.timer.delay+=5000;
+                    this.totalTime+=5;
+                    this.tar2.reset();
                 }
                 mouseDown = false;
             });
