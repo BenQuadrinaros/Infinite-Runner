@@ -22,6 +22,7 @@ class Play extends Phaser.Scene {
     create() {
         game.input.mouse.capture = true;
         this.faster = 500;
+        game.settings.scrollSpeed = 2;
 
         //place backgrounds
         //this.starfield = this.add.tileSprite(0,0,640,480,"starfield").setOrigin(0,0);
