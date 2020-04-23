@@ -5,14 +5,14 @@ class Play extends Phaser.Scene {
 
     preload() {
         //load up all assets and animations
-        this.load.image('skyBG','./assets/art/SkyBackground.jpg');
-        this.load.image('treeBG','./assets/art/treeBackgrounLayer.png');
-        this.load.image('mountainBG','./assets/art/mountainBackgrounLayer.png');
-        this.load.image('snowGround','./assets/art/snowLayer.png');
-        this.load.image('player','./assets/art/player.png');
-        this.load.image('obstacle','./assets/art/obstacle.png');
-        this.load.image('gate','./assets/art/slalomGate.png');
-        this.load.image('target','./assets/art/target.png');
+        this.load.image('skyBG','./assets/SkyBackground.jpg');
+        this.load.image('treeBG','./assets/treeBackgrounLayer.png');
+        this.load.image('mountainBG','./assets/mountainBackgrounLayer.png');
+        this.load.image('snowGround','./assets/snowLayer.png');
+        this.load.image('player','./assets/player.png');
+        this.load.image('obstacle','./assets/obstacle.png');
+        this.load.image('gate','./assets/slalomGate.png');
+        this.load.image('target','./assets/target.png');
 
         //load audio
         //this.load.audio("sfx_select", "./assets/blip_select12.wav");
@@ -194,9 +194,10 @@ class Play extends Phaser.Scene {
         //game over screen with options to restart or go back to menu
         console.log("game over"); 
         this.scoreConfig.fontSize = "48px";
+        this.scoreConfig.fixedWidth = 0;
         this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", this.scoreConfig).setOrigin(.5);
-        this.scoreConfig.fontSize = "40px";
-        this.playText = this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (↑) to restart the game. ", this.scoreConfig).setOrigin(.5).setInteractive();
+        this.scoreConfig.fontSize = "32px";
+        this.playText = this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (↑) to restart the game.", this.scoreConfig).setOrigin(.5).setInteractive();
         this.playText = this.add.text(game.config.width/2, game.config.height/2 + 128, "Press (↓) to return to the menu.", this.scoreConfig).setOrigin(.5).setInteractive();
         this.gameOver = true;
     }
