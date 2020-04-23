@@ -12,6 +12,7 @@ class Play extends Phaser.Scene {
         this.load.image('player','../../assets/art/player.png');
         this.load.image('obstacle','../../assets/art/obstacle.png');
         this.load.image('gate','../../assets/art/slalomGate.png');
+        this.load.image('target','../../assets/art/target.png');
 
         //load audio
         //this.load.audio("sfx_select", "./assets/blip_select12.wav");
@@ -75,6 +76,9 @@ class Play extends Phaser.Scene {
         this.gate2.reset();
         this.gate2.x += 90 + Math.round(Math.random() * 100);
 
+        this.tar1 = new Target(this,0,0,'target',0).setOrigin(0,0).setInteractive();
+        this.tar1.reset();
+
         //game timer and game over
         this.gameOver = false;
     }
@@ -98,30 +102,36 @@ class Play extends Phaser.Scene {
         this.obs3.update();
         this.gate1.update();
         this.gate2.update();
+        this.tar1.update();
 
         //check mouse click
         if(game.input.mousePointer.isDown) {
             console.log("mouseX " + game.input.mousePointer.x + " mouse:Y " + game.input.mousePointer.y);
         }
 
+        this.tar1.on('pointerdown',() =>{
+         console.log('targetHit!');
+         this.tar1.reset();
+        });
+
         //check collisions
         if(this.checkCollisionsObs(this.p1, this.obs1)) {
             //stumble animation
             //decrement time
             this.obs1.enabled = false;
-            console.log("Hit object1");
+            // console.log("Hit object1");
         }
         this.checkCollisionsObs(this.p1, this.obs2);{
             //stumble animation
             //decrement time
             this.obs2.enabled = false;
-            console.log("Hit object2");
+            // console.log("Hit object2");
         }
         this.checkCollisionsObs(this.p1, this.obs3);{
             //stumble animation
             //decrement time
             this.obs3.enabled = false;
-            console.log("Hit object3");
+            // console.log("Hit object3");
         }
         if(this.checkCollisionGate(this.p1, this.gate1)) {
             this.p1Score += 10;
