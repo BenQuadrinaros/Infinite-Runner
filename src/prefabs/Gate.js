@@ -8,7 +8,7 @@ class Gate extends Phaser.GameObjects.Sprite {
 
     update(){
         this.x -= game.settings.scrollSpeed;
-        if(this.x <= -this.width) {
+        if(this.x <= -this.width - 20) {
             this.reset();
         }
     }

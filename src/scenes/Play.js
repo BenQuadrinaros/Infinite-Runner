@@ -23,24 +23,12 @@ class Play extends Phaser.Scene {
         game.input.mouse.capture = true;
         this.faster = 500;
 
-        //timer variables
-        this.totalTime = 5;
-        this.timer =  this.time.addEvent({
-            delay:this.totalTime*1000,
-            callback: () => {console.log("game over")},
-            loop:false,
-            callbackScope:this
-        });
-
-
         //place backgrounds
         //this.starfield = this.add.tileSprite(0,0,640,480,"starfield").setOrigin(0,0);
         this.skyBG = this.add.tileSprite(0,0,640,480,'skyBG').setOrigin(0,0);
         this.mountainBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'mountainBG').setOrigin(0,0).setScale(1.25,1.25);
         this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'treeBG').setOrigin(0,0).setScale(1.25,1.25);
         this.snow = this.add.tileSprite(0,0,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(2.1,4);
-
-
 
         //keys for movement
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -50,7 +38,7 @@ class Play extends Phaser.Scene {
 
         //add top-border for UI
         this.add.rectangle(0,0,640,110,0x151565).setOrigin(0,0);
-        let scoreConfig = {
+        this.scoreConfig = {
             fontFamily: "Courier", 
             fontSize: "28px",
             backgroundColor: "#A0A0A0",
@@ -63,15 +51,9 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         };
         this.p1Score = 0;
-        this.scoreLeft = this.add.text(69, 54, this.p1Score, scoreConfig);
-
-
-        //place timer
-        this.timeLeft = this.add.text(game.config.width-100, 54, this.timer.delay, scoreConfig);
+        this.scoreLeft = this.add.text(69, 54, this.p1Score, this.scoreConfig);
         
         //place assets into the scene
-        //player object
-        this.p1 = new Player(this,40,game.config.height-100,'player').setOrigin(0,0);
 
         this.obs1 = new Obstacle(this,0,0,'obstacle').setOrigin(0,0);
         this.obs1.setScale(3, 1.5);
@@ -95,105 +77,126 @@ class Play extends Phaser.Scene {
         this.tar1 = new Target(this,0,0,'target',0).setOrigin(0,0).setInteractive();
         this.tar1.reset();
 
+        //player object
+        this.p1 = new Player(this,40,game.config.height-100,'player').setOrigin(0,0);
+
         //game timer and game over
         this.gameOver = false;
+        //timer variables
+        this.totalTime = 5;
+        this.timer =  this.time.addEvent({
+            delay:this.totalTime*1000,
+            callback: () => {this.displayGameOver()},
+            loop:false,
+            callbackScope:this
+        });
+        //place timer
+        this.timeLeft = this.add.text(game.config.width-160, 54, this.timer.delay, this.scoreConfig);
     }
 
     update() {
-        //update everything in game
-        this.faster--;
-        if(this.faster <= 0) {
-            this.faster = 500;
-            game.settings.scrollSpeed++;
-        }
-
-        this.skyBG.tilePositionX += game.settings.scrollSpeed/4;
-        this.mountainBG.tilePositionX += game.settings.scrollSpeed/2;
-        this.treeBG.tilePositionX += game.settings.scrollSpeed;
-        this.snow.tilePositionX += game.settings.scrollSpeed;
-
-        this.p1.update();
-        this.obs1.update();
-        this.obs2.update();
-        this.obs3.update();
-        this.gate1.update();
-        this.gate2.update();
-        this.tar1.update();
-
-        //check mouse click
-        // if(game.input.mousePointer.isDown) {
-        //     if (mouseDown) {
-        //         console.log("mouseX " + game.input.mousePointer.x + " mouse:Y " + game.input.mousePointer.y);
-        //     }
-        //     mouseDown = false;
-        // }
-
-        if (!game.input.mousePointer.isDown){
-            mouseDown = true;
-        }
-
-        this.tar1.on('pointerdown',() =>{
-            if (mouseDown) {
-                console.log('targetHit!');
-                this.timer.delay+=5000;
-                this.totalTime+=5;
-                this.tar1.reset();
+        //check for gameOver
+        if(this.gameOver) {
+            if(Phaser.Input.Keyboard.JustDown(keyUP)) {
+                this.scene.restart();
+            } else if (Phaser.Input.Keyboard.JustDown(keyDOWN)) {
+                this.scene.start("menuScene");
             }
-            mouseDown = false;
-        });
+        } else {
+            //update everything in game
+            this.faster--;
+            if(this.faster <= 0) {
+             this.faster = 500;
+                game.settings.scrollSpeed++;
+            }
 
-        //update timer
-        this.timeLeft.text = this.totalTime - this.timer.getElapsedSeconds();
+            this.skyBG.tilePositionX += game.settings.scrollSpeed/4;
+            this.mountainBG.tilePositionX += game.settings.scrollSpeed/2;
+            this.treeBG.tilePositionX += game.settings.scrollSpeed;
+            this.snow.tilePositionX += game.settings.scrollSpeed;
 
-        //check collisions
-        if(this.checkCollisionsObs(this.p1, this.obs1)) {
-            //stumble animation
-            //decrement time
-            this.obs1.enabled = false;
-            // console.log("Hit object1");
-        }
-        this.checkCollisionsObs(this.p1, this.obs2);{
-            //stumble animation
-            //decrement time
-            this.obs2.enabled = false;
-            // console.log("Hit object2");
-        }
-        this.checkCollisionsObs(this.p1, this.obs3);{
-            //stumble animation
-            //decrement time
-            this.obs3.enabled = false;
-            // console.log("Hit object3");
-        }
-        if(this.checkCollisionGate(this.p1, this.gate1)) {
-            this.p1Score += 10;
-            this.gate1.enabled = false;
-            this.scoreLeft.text = this.p1Score;
-        }
-        if(this.checkCollisionGate(this.p1, this.gate2)) {
-            this.p1Score += 10;
-            this.gate2.enabled = false;
-            this.scoreLeft.text = this.p1Score;
+            this.p1.update();
+            this.obs1.update();
+            this.obs2.update();
+            this.obs3.update();
+            this.gate1.update();
+            this.gate2.update();
+            this.tar1.update();
+
+            if (!game.input.mousePointer.isDown){
+                mouseDown = true;
+            }
+
+            this.tar1.on('pointerdown',() =>{
+                if (mouseDown) {
+                    console.log('targetHit!');
+                    this.timer.delay+=5000;
+                    this.totalTime+=5;
+                    this.tar1.reset();
+                }
+                mouseDown = false;
+            });
+
+            //update timer
+            this.timeLeft.text = Math.round(this.totalTime - this.timer.getElapsedSeconds());
+
+            //check collisions
+            if(this.checkCollision(this.p1, this.obs1)) {
+                //play hit sound
+                //stumble animation
+                this.timer.delay-=3000;
+                this.totalTime-=3;
+                this.obs1.enabled = false;
+                //console.log("hit obs1");
+            }
+            if(this.checkCollision(this.p1, this.obs2)) {
+                //play hit sound
+                //stumble animation
+                this.timer.delay-=3000;
+                this.totalTime-=3;
+                this.obs2.enabled = false;
+                //console.log("hit obs2");
+            }
+            if(this.checkCollision(this.p1, this.obs3)) {
+                //play hit sound
+                //stumble animation
+                this.timer.delay-=3000;
+                this.totalTime-=3;
+                this.obs3.enabled = false;
+                //console.log("hit obs3");
+            }
+            if(this.checkCollision(this.p1, this.gate1)) {
+                //play gate sound
+                this.p1Score += 10;
+                this.gate1.enabled = false;
+                this.scoreLeft.text = this.p1Score;
+            }
+            if(this.checkCollision(this.p1, this.gate2)) {
+                //play gate sound
+                this.p1Score += 10;
+                this.gate2.enabled = false;
+                this.scoreLeft.text = this.p1Score;
+            }
         }
     }
 
-    checkCollisionsObs(player, obstacle) {
-        if(!(obstacle.enabled)) {
+    checkCollision(player, other) {
+        if(!(other.enabled)) {
             return false;
-        } else if(player.x < obstacle.x + obstacle.width && player.x + player.width > obstacle.x &&
-            player.y < obstacle.y + obstacle.height && player.y + player.height > obstacle.y) {
+        } else if(player.x < other.x + other.width && player.x + player.width > other.x &&
+            player.y < other.y + other.height && player.y + player.height > other.y) {
             return true;
         }
     }
-    checkCollisionGate(player, gate) {
-        if(!(gate.enabled)) {
-            return false;
-        } else if(player.x < gate.x + gate.width && player.x + player.width > gate.x &&
-            player.y < gate.y + gate.height && player.y + player.height > gate.y) {
-            return true;
-        }
-    }
 
-    gameOver(){
-    console.log("Game Over");
+    displayGameOver() {
+        //game over screen with options to restart or go back to menu
+        console.log("game over"); 
+        this.scoreConfig.fontSize = "48px";
+        this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", this.scoreConfig).setOrigin(.5);
+        this.scoreConfig.fontSize = "40px";
+        this.playText = this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (↑) to restart the game. ", this.scoreConfig).setOrigin(.5).setInteractive();
+        this.playText = this.add.text(game.config.width/2, game.config.height/2 + 128, "Press (↓) to return to the menu.", this.scoreConfig).setOrigin(.5).setInteractive();
+        this.gameOver = true;
     }
 }

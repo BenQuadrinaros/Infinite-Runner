@@ -7,7 +7,7 @@ class Target extends Phaser.GameObjects.Sprite {
 
     update(){
         this.x -= game.settings.scrollSpeed*.7;
-        if(this.x <= -this.width) {
+        if(this.x <= -this.width - 20) {
             this.reset();
         }
     }

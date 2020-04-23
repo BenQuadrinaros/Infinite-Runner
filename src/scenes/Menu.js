@@ -38,25 +38,28 @@ class Menu extends Phaser.Scene {
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
 
-        //left mouse click assignment
-
-        //launches next scene
-        //this.scene.start("playScene");
+        this.singleClick = 0;
     }
 
     update() {
-        
+        if(game.input.mousePointer.isDown){
+            this.singleClick++;
+        } else if(!(game.input.mousePointer.isDown)){
+            this.singleClick = 0;
+        }
         if(Phaser.Input.Keyboard.JustDown(keyUP)) {
-                this.scene.start("playScene");
+            this.scene.start("playScene");
         }
         if(Phaser.Input.Keyboard.JustDown(keyDOWN)) {
             this.scene.start("instructionScene");
         }
-        this.playText.on('pointerdown',() => {
-            this.scene.start("playScene");
-        });
-        this.instructionsText.on('pointerdown',() => {
-                this.scene.start("instructionScene");
-        });
+        if(this.singleClick == 1) {
+            this.playText.on('pointerdown',() => {
+                this.scene.start("playScene");
+            });
+            this.instructionsText.on('pointerdown',() => {
+                    this.scene.start("instructionScene");
+            });
+        }
     }
 }
