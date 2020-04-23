@@ -6,7 +6,7 @@ class Target extends Phaser.GameObjects.Sprite {
     }
 
     update(){
-        this.x -= game.settings.scrollSpeed;
+        this.x -= game.settings.scrollSpeed*.7;
         if(this.x <= -this.width) {
             this.reset();
         }
@@ -15,7 +15,6 @@ class Target extends Phaser.GameObjects.Sprite {
     reset() {
         this.y = Math.round(Math.random() * game.config.width/2);
         this.x = game.config.width + Math.round(Math.random() * 30);
-        console.log(this.y);
         this.enabled = true;
     }
 
