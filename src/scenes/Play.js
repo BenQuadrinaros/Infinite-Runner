@@ -16,13 +16,18 @@ class Play extends Phaser.Scene {
 
         //load audio
         //this.load.audio("sfx_select", "./assets/blip_select12.wav");
-
+        this.load.audio("GatePass", "./assets/GatePass.wav");
+        this.load.audio("ObsHit", "./assets/ObsHit.wav");
+        this.load.audio("ShotFired", "./assets/ShotFired.wav");
+        this.load.audio("TargetBreak", "./assets/TargetBreak.wav");
     }
 
     create() {
         game.input.mouse.capture = true;
         this.faster = 500;
         game.settings.scrollSpeed = 2;
+        this.singleClick = 0;
+        this.mouseDown = false;
 
         //place backgrounds
         //this.starfield = this.add.tileSprite(0,0,640,480,"starfield").setOrigin(0,0);
@@ -101,8 +106,10 @@ class Play extends Phaser.Scene {
         //check for gameOver
         if(this.gameOver) {
             if(Phaser.Input.Keyboard.JustDown(keyUP)) {
+                this.sound.play("menuSelect");
                 this.scene.restart();
             } else if (Phaser.Input.Keyboard.JustDown(keyDOWN)) {
+                this.sound.play("menuSelect");
                 this.scene.start("menuScene");
             }
         } else {
@@ -127,25 +134,32 @@ class Play extends Phaser.Scene {
             this.tar1.update();
             this.tar2.update();
 
-            if (!game.input.mousePointer.isDown){
+            //manage mouse clicks and targets shot
+            if(game.input.mousePointer.isDown){
+                this.singleClick++;
+            } else {
+                this.singleClick = 0;
                 mouseDown = true;
             }
-
+            if(this.singleClick == 1) {
+                this.sound.play("ShotFired");
+            }
             this.tar1.on('pointerdown',() =>{
-                if (mouseDown) {
-                    console.log('targetHit!');
-                    this.timer.delay+=5000;
-                    this.totalTime+=5;
+                if(mouseDown) {
+                    //console.log('target1Hit!');
+                    this.sound.play("TargetBreak");
+                    this.timer.delay+=3000;
+                    this.totalTime+=3;
                     this.tar1.reset();
                 }
                 mouseDown = false;
             });
-
             this.tar2.on('pointerdown',() =>{
-                if (mouseDown) {
-                    console.log('targetHit!');
-                    this.timer.delay+=5000;
-                    this.totalTime+=5;
+                if(mouseDown) {
+                    //console.log('target1Hit!');
+                    this.sound.play("TargetBreak");
+                    this.timer.delay+=3000;
+                    this.totalTime+=3;
                     this.tar2.reset();
                 }
                 mouseDown = false;
@@ -156,37 +170,40 @@ class Play extends Phaser.Scene {
 
             //check collisions
             if(this.checkCollision(this.p1, this.obs1)) {
-                //play hit sound
+                this.sound.play("ObsHit");
                 //stumble animation
-                this.timer.delay-=3000;
-                this.totalTime-=3;
+                this.timer.delay-=5000;
+                this.totalTime-=5;
                 this.obs1.enabled = false;
                 //console.log("hit obs1");
+                game.settings.scrollSpeed--;
             }
             if(this.checkCollision(this.p1, this.obs2)) {
-                //play hit sound
+                this.sound.play("ObsHit");
                 //stumble animation
-                this.timer.delay-=3000;
-                this.totalTime-=3;
+                this.timer.delay-=5000;
+                this.totalTime-=5;
                 this.obs2.enabled = false;
                 //console.log("hit obs2");
+                game.settings.scrollSpeed--;
             }
             if(this.checkCollision(this.p1, this.obs3)) {
-                //play hit sound
+                this.sound.play("ObsHit");
                 //stumble animation
-                this.timer.delay-=3000;
-                this.totalTime-=3;
+                this.timer.delay-=5000;
+                this.totalTime-=5;
                 this.obs3.enabled = false;
                 //console.log("hit obs3");
+                game.settings.scrollSpeed--;
             }
             if(this.checkCollision(this.p1, this.gate1)) {
-                //play gate sound
+                this.sound.play("GatePass");
                 this.p1Score += 10;
                 this.gate1.enabled = false;
                 this.scoreLeft.text = this.p1Score;
             }
             if(this.checkCollision(this.p1, this.gate2)) {
-                //play gate sound
+                this.sound.play("GatePass");
                 this.p1Score += 10;
                 this.gate2.enabled = false;
                 this.scoreLeft.text = this.p1Score;

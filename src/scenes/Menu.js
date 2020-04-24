@@ -5,7 +5,7 @@ class Menu extends Phaser.Scene {
 
     preload() {
         //load audio files
-        //this.load.audio("sfx_select", "./assets/blip_select12.wav");
+        this.load.audio("menuSelect", "./assets/menuSelect.wav");
     }
     
     create() {
@@ -48,17 +48,21 @@ class Menu extends Phaser.Scene {
             this.singleClick = 0;
         }
         if(Phaser.Input.Keyboard.JustDown(keyUP)) {
+            this.sound.play("menuSelect");
             this.scene.start("playScene");
         }
         if(Phaser.Input.Keyboard.JustDown(keyDOWN)) {
+            this.sound.play("menuSelect");
             this.scene.start("instructionScene");
         }
         if(this.singleClick == 1) {
             this.playText.on('pointerdown',() => {
+                this.sound.play("menuSelect");
                 this.scene.start("playScene");
             });
             this.instructionsText.on('pointerdown',() => {
-                    this.scene.start("instructionScene");
+                this.sound.play("menuSelect");
+                this.scene.start("instructionScene");
             });
         }
     }
