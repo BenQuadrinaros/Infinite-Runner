@@ -91,7 +91,7 @@ class Play extends Phaser.Scene {
         //game timer and game over
         this.gameOver = false;
         //timer variables
-        this.totalTime = 5;
+        this.totalTime = 10;
         this.timer =  this.time.addEvent({
             delay:this.totalTime*1000,
             callback: () => {this.displayGameOver()},
