@@ -56,7 +56,21 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         };
+        this.labelConfig =
+            {
+                fontFamily: "Courier",
+                fontSize: "14px",
+                color: "#ffffff",
+                align: "right",
+                padding: {
+                    top: 5,
+                    bottom: 5
+                },
+            };
+
         this.p1Score = 0;
+
+        this.scoreLabel = this.add.text(69,24,"SCORE",this.labelConfig);
         this.scoreLeft = this.add.text(69, 54, this.p1Score, this.scoreConfig);
         
         //place assets into the scene
@@ -99,6 +113,8 @@ class Play extends Phaser.Scene {
             callbackScope:this
         });
         //place timer
+
+        this.timeLeftLable = this.add.text(game.config.width-160, 24,"TIME LEFT",this.labelConfig);
         this.timeLeft = this.add.text(game.config.width-160, 54, this.timer.delay, this.scoreConfig);
     }
 
@@ -201,6 +217,7 @@ class Play extends Phaser.Scene {
                 this.p1Score += 10;
                 this.gate1.enabled = false;
                 this.scoreLeft.text = this.p1Score;
+
             }
             if(this.checkCollision(this.p1, this.gate2)) {
                 this.sound.play("GatePass");
