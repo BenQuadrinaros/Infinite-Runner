@@ -179,7 +179,7 @@ class Play extends Phaser.Scene {
                     this.timer.delay+=3000;
                     this.totalTime+=3;
                     this.tar1.reset();
-                    game.settings.scrollSpeed += .5;
+                    if(game.settings.scrollSpeed <= 4) {game.settings.scrollSpeed += .5;}
                 }
                 mouseDown = false;
             });
@@ -190,7 +190,7 @@ class Play extends Phaser.Scene {
                     this.timer.delay+=3000;
                     this.totalTime+=3;
                     this.tar2.reset();
-                    game.settings.scrollSpeed += .5;
+                    if(game.settings.scrollSpeed <= 4) {game.settings.scrollSpeed += .5;}
                 }
                 mouseDown = false;
             });
