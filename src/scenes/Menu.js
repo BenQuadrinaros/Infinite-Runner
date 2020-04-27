@@ -49,20 +49,40 @@ class Menu extends Phaser.Scene {
         }
         if(Phaser.Input.Keyboard.JustDown(keyUP)) {
             this.sound.play("menuSelect");
-            this.scene.start("playScene");
+            this.time.addEvent({
+                delay:1300,
+                callback: () => {this.scene.start("playScene")},
+                loop:false,
+                callbackScope:this
+            });
         }
         if(Phaser.Input.Keyboard.JustDown(keyDOWN)) {
             this.sound.play("menuSelect");
-            this.scene.start("instructionScene");
+            this.time.addEvent({
+                delay:1300,
+                callback: () => {this.scene.start("instructionScene")},
+                loop:false,
+                callbackScope:this
+            });
         }
         if(this.singleClick == 1) {
             this.playText.on('pointerdown',() => {
                 this.sound.play("menuSelect");
-                this.scene.start("playScene");
+                this.time.addEvent({
+                    delay:1300,
+                    callback: () => {this.scene.start("playScene")},
+                    loop:false,
+                    callbackScope:this
+                });
             });
             this.instructionsText.on('pointerdown',() => {
                 this.sound.play("menuSelect");
-                this.scene.start("instructionScene");
+                this.time.addEvent({
+                    delay:1300,
+                    callback: () => {this.scene.start("instructionScene")},
+                    loop:false,
+                    callbackScope:this
+                });
             });
         }
     }

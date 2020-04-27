@@ -3,7 +3,6 @@ class Player extends Phaser.GameObjects.Sprite {
     constructor(scene,x,y,texture,frame) {
         super(scene,x,y,texture,frame);
         scene.add.existing(this);
-        this.moveDistance = 5;
     }
 
     update(){
@@ -12,14 +11,14 @@ class Player extends Phaser.GameObjects.Sprite {
             //make sure player stays in bottom half of screen
             if (this.y >game.config.height/2 + 30){
             //move player up
-             this.y-=this.moveDistance;
+             this.y-=game.settings.scrollSpeed/2;
             }
         }
         //s key or down arrow - move down
         if (keyDOWN.isDown || keyS.isDown){
             //make sure player does not go off screen
             if (this.y<=game.config.height-30){
-                this.y+=this.moveDistance;
+                this.y+=game.settings.scrollSpeed/2;
             }
         }
     }

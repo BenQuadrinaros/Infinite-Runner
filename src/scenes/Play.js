@@ -20,12 +20,13 @@ class Play extends Phaser.Scene {
         this.load.audio("ObsHit", "./assets/ObsHit.wav");
         this.load.audio("ShotFired", "./assets/ShotFired.wav");
         this.load.audio("TargetBreak", "./assets/TargetBreak.wav");
+        this.load.audio("music", "./assets/BackgroundMusic.wav");
     }
 
     create() {
         game.input.mouse.capture = true;
-        this.faster = 500;
-        game.settings.scrollSpeed = 2;
+        this.faster = 50;
+        game.settings.scrollSpeed = 0;
         this.singleClick = 0;
         this.mouseDown = false;
 
@@ -35,6 +36,16 @@ class Play extends Phaser.Scene {
         this.mountainBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'mountainBG').setOrigin(0,0).setScale(1.25,1.25);
         this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'treeBG').setOrigin(0,0).setScale(1.25,1.25);
         this.snow = this.add.tileSprite(0,0,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(2.1,4);
+        
+        //start up looping background music
+        this.music = this.sound.add("music");
+        this.music.loop = true;
+        this.music.volume = .7;
+        this.music.play();
+
+        //decraese target hit volume
+        this.targetHit = this.sound.add("TargetBreak");
+        this.targetHit.volume = .1;
 
         //keys for movement
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -105,7 +116,7 @@ class Play extends Phaser.Scene {
         //game timer and game over
         this.gameOver = false;
         //timer variables
-        this.totalTime = 10;
+        this.totalTime = 15;
         this.timer =  this.time.addEvent({
             delay:this.totalTime*1000,
             callback: () => {this.displayGameOver()},
@@ -133,7 +144,8 @@ class Play extends Phaser.Scene {
             this.faster--;
             if(this.faster <= 0) {
              this.faster = 500;
-                game.settings.scrollSpeed++;
+                game.settings.scrollSpeed += .5;
+                this.music.rate = 1 + (game.settings.scrollSpeed / 100);
             }
 
             this.skyBG.tilePositionX += game.settings.scrollSpeed/4;
@@ -163,20 +175,22 @@ class Play extends Phaser.Scene {
             this.tar1.on('pointerdown',() =>{
                 if(mouseDown) {
                     //console.log('target1Hit!');
-                    this.sound.play("TargetBreak");
+                    this.targetHit.play();
                     this.timer.delay+=3000;
                     this.totalTime+=3;
                     this.tar1.reset();
+                    game.settings.scrollSpeed += .5;
                 }
                 mouseDown = false;
             });
             this.tar2.on('pointerdown',() =>{
                 if(mouseDown) {
                     //console.log('target1Hit!');
-                    this.sound.play("TargetBreak");
+                    this.targetHit.play();
                     this.timer.delay+=3000;
                     this.totalTime+=3;
                     this.tar2.reset();
+                    game.settings.scrollSpeed += .5;
                 }
                 mouseDown = false;
             });
@@ -192,7 +206,8 @@ class Play extends Phaser.Scene {
                 this.totalTime-=5;
                 this.obs1.enabled = false;
                 //console.log("hit obs1");
-                game.settings.scrollSpeed--;
+                game.settings.scrollSpeed -= 2;
+                if(game.settings.scrollSpeed < 0) {game.settings.scrollSpeed = 0;}
             }
             if(this.checkCollision(this.p1, this.obs2)) {
                 this.sound.play("ObsHit");
@@ -201,7 +216,8 @@ class Play extends Phaser.Scene {
                 this.totalTime-=5;
                 this.obs2.enabled = false;
                 //console.log("hit obs2");
-                game.settings.scrollSpeed--;
+                game.settings.scrollSpeed -= 2;
+                if(game.settings.scrollSpeed < 0) {game.settings.scrollSpeed = 0;}
             }
             if(this.checkCollision(this.p1, this.obs3)) {
                 this.sound.play("ObsHit");
@@ -210,7 +226,8 @@ class Play extends Phaser.Scene {
                 this.totalTime-=5;
                 this.obs3.enabled = false;
                 //console.log("hit obs3");
-                game.settings.scrollSpeed--;
+                game.settings.scrollSpeed -= 2;
+                if(game.settings.scrollSpeed < 0) {game.settings.scrollSpeed = 0;}
             }
             if(this.checkCollision(this.p1, this.gate1)) {
                 this.sound.play("GatePass");
@@ -231,14 +248,15 @@ class Play extends Phaser.Scene {
     checkCollision(player, other) {
         if(!(other.enabled)) {
             return false;
-        } else if(player.x < other.x + other.width && player.x + player.width > other.x &&
-            player.y < other.y + other.height && player.y + player.height > other.y) {
+        } else if(player.x < other.x + 3*other.width/4 && player.x + 3*player.width/4 > other.x &&
+            player.y < other.y + 3*other.height/4 && player.y + 3*player.height/4 > other.y) {
             return true;
         }
     }
 
     displayGameOver() {
         //game over screen with options to restart or go back to menu
+        this.music.loop = false;
         console.log("game over"); 
         this.scoreConfig.fontSize = "48px";
         this.scoreConfig.fixedWidth = 0;

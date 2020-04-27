@@ -60,12 +60,22 @@ class Instructions extends Phaser.Scene {
         }
         if(Phaser.Input.Keyboard.JustDown(keyDOWN)) {
             this.sound.play("menuSelect");
-            this.scene.start("menuScene");
+            this.time.addEvent({
+                delay:1300,
+                callback: () => {this.scene.start("menuScene")},
+                loop:false,
+                callbackScope:this
+            });
         }
         if(this.singleClick == 1) {
             this.backText.on('pointerdown',() => {
                 this.sound.play("menuSelect");
-                this.scene.start("menuScene");
+                this.time.addEvent({
+                    delay:1300,
+                    callback: () => {this.scene.start("menuScene")},
+                    loop:false,
+                    callbackScope:this
+                });
             });
         }
     }
