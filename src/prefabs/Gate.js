@@ -15,7 +15,7 @@ class Gate extends Phaser.GameObjects.Sprite {
 
     reset() {
         this.x = game.config.width + Math.round(Math.random() * 15);
-        this.y = game.config.width/2 + Math.round(Math.random() * game.config.width/2);
+        this.y = game.config.height/2 + Math.round(Math.random() * game.config.height / 4) + 30;
         this.enabled = true;
     }
 }

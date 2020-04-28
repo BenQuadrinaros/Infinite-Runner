@@ -5,7 +5,7 @@ class Play extends Phaser.Scene {
 
     preload() {
         //load up all assets and animations
-        this.load.image('skyBG','./assets/SkyBackground.jpg');
+        this.load.image('skyBG','./assets/SkyBackground.png');
         this.load.image('treeBG','./assets/treeBackgrounLayer.png');
         this.load.image('mountainBG','./assets/mountainBackgrounLayer.png');
         this.load.image('snowGround','./assets/snowLayer.png');
@@ -32,10 +32,10 @@ class Play extends Phaser.Scene {
 
         //place backgrounds
         //this.starfield = this.add.tileSprite(0,0,640,480,"starfield").setOrigin(0,0);
-        this.skyBG = this.add.tileSprite(0,0,640,480,'skyBG').setOrigin(0,0);
-        this.mountainBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'mountainBG').setOrigin(0,0).setScale(1.25,1.25);
-        this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'treeBG').setOrigin(0,0).setScale(1.25,1.25);
-        this.snow = this.add.tileSprite(0,0,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(2.1,4);
+        this.skyBG = this.add.tileSprite(0,0,640,480,'skyBG').setOrigin(0,0).setScale(1.5,.9);
+        this.mountainBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'mountainBG').setOrigin(0,0).setScale(1.5,1.2);
+        this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'treeBG').setOrigin(0,0).setScale(1.28,1.28);
+        this.snow = this.add.tileSprite(0,25,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(2.1,3.8);
         
         //start up looping background music
         this.music = this.sound.add("music");
@@ -145,8 +145,8 @@ class Play extends Phaser.Scene {
             if(this.faster <= 0) {
              this.faster = 500;
                 game.settings.scrollSpeed += .5;
-                this.music.rate = 1 + (game.settings.scrollSpeed / 100);
             }
+            this.music.rate = 1 + (game.settings.scrollSpeed / 100);
 
             this.skyBG.tilePositionX += game.settings.scrollSpeed/4;
             this.mountainBG.tilePositionX += game.settings.scrollSpeed/2;
@@ -179,7 +179,7 @@ class Play extends Phaser.Scene {
                     this.timer.delay+=3000;
                     this.totalTime+=3;
                     this.tar1.reset();
-                    if(game.settings.scrollSpeed <= 4) {game.settings.scrollSpeed += .5;}
+                    if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
                 }
                 mouseDown = false;
             });
@@ -190,7 +190,7 @@ class Play extends Phaser.Scene {
                     this.timer.delay+=3000;
                     this.totalTime+=3;
                     this.tar2.reset();
-                    if(game.settings.scrollSpeed <= 4) {game.settings.scrollSpeed += .5;}
+                    if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
                 }
                 mouseDown = false;
             });
@@ -198,7 +198,39 @@ class Play extends Phaser.Scene {
             //update timer
             this.timeLeft.text = Math.round(this.totalTime - this.timer.getElapsedSeconds());
 
-            //check collisions
+            //make sure obs and gates are not overlapping
+            if(this.checkCollision(this.obs1, this.obs2)) {
+                this.obs2.reset();
+            }
+            if(this.checkCollision(this.obs1, this.obs3)) {
+                this.obs3.reset();
+            }
+            if(this.checkCollision(this.obs1, this.gate1)) {
+                this.gate1.reset();
+            }
+            if(this.checkCollision(this.obs1, this.gate2)) {
+                this.gate2.reset();
+            }
+            if(this.checkCollision(this.obs2, this.obs3)) {
+                this.obs3.reset();
+            }
+            if(this.checkCollision(this.obs2, this.gate1)) {
+                this.gate1.reset();
+            }
+            if(this.checkCollision(this.obs2, this.gate2)) {
+                this.gate2.reset();
+            }
+            if(this.checkCollision(this.obs3, this.gate1)) {
+                this.gate1.reset();
+            }
+            if(this.checkCollision(this.obs3, this.gate2)) {
+                this.gate2.reset();
+            }
+            if(this.checkCollision(this.gate1, this.gate2)) {
+                this.gate2.reset();
+            }
+
+            //check collisions against player
             if(this.checkCollision(this.p1, this.obs1)) {
                 this.sound.play("ObsHit");
                 //stumble animation
@@ -257,13 +289,12 @@ class Play extends Phaser.Scene {
     displayGameOver() {
         //game over screen with options to restart or go back to menu
         this.music.loop = false;
-        console.log("game over"); 
+        this.gameOver = true;
         this.scoreConfig.fontSize = "48px";
         this.scoreConfig.fixedWidth = 0;
         this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", this.scoreConfig).setOrigin(.5);
         this.scoreConfig.fontSize = "32px";
         this.playText = this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (↑) to restart the game.", this.scoreConfig).setOrigin(.5).setInteractive();
         this.playText = this.add.text(game.config.width/2, game.config.height/2 + 128, "Press (↓) to return to the menu.", this.scoreConfig).setOrigin(.5).setInteractive();
-        this.gameOver = true;
     }
 }
