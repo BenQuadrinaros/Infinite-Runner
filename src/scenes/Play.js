@@ -21,6 +21,7 @@ class Play extends Phaser.Scene {
         this.load.audio("ShotFired", "./assets/ShotFired.wav");
         this.load.audio("TargetBreak", "./assets/TargetBreak.wav");
         this.load.audio("music", "./assets/BackgroundMusic.wav");
+        this.load.audio("GameOver", "./assets/GameOver.wav");
     }
 
     create() {
@@ -52,40 +53,8 @@ class Play extends Phaser.Scene {
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-
-        //add top-border for UI
-        this.add.rectangle(0,0,640,110,0x151565).setOrigin(0,0);
-        this.scoreConfig = {
-            fontFamily: "Courier", 
-            fontSize: "28px",
-            backgroundColor: "#A0A0A0",
-            color: "#1010B5",
-            align: "right",
-            padding: {
-                top: 5,
-                bottom: 5
-            },
-            fixedWidth: 100
-        };
-        this.labelConfig =
-            {
-                fontFamily: "Courier",
-                fontSize: "14px",
-                color: "#ffffff",
-                align: "right",
-                padding: {
-                    top: 5,
-                    bottom: 5
-                },
-            };
-
-        this.p1Score = 0;
-
-        this.scoreLabel = this.add.text(69,24,"SCORE",this.labelConfig);
-        this.scoreLeft = this.add.text(69, 54, this.p1Score, this.scoreConfig);
         
         //place assets into the scene
-
         this.obs1 = new Obstacle(this,0,0,'obstacle').setOrigin(0,0);
         this.obs1.setScale(3, 1.5);
         this.obs1.reset();
@@ -115,23 +84,62 @@ class Play extends Phaser.Scene {
 
         //game timer and game over
         this.gameOver = false;
+        this.canLeave = false;
         //timer variables
         this.totalTime = 15;
         this.timer =  this.time.addEvent({
             delay:this.totalTime*1000,
-            callback: () => {this.displayGameOver()},
+            callback: () => {this.delayGameOver()},
             loop:false,
             callbackScope:this
         });
-        //place timer
 
+        //add top-border for UI
+        this.add.rectangle(0,0,640,110,0x151565).setOrigin(0,0);
+        this.scoreConfig = {
+            fontFamily: "Courier", 
+            fontSize: "28px",
+            backgroundColor: "#A0A0A0",
+            color: "#1010B5",
+            align: "right",
+            padding: {
+                top: 5,
+                bottom: 5
+            },
+            fixedWidth: 100
+        };
+        this.labelConfig =
+            {
+                fontFamily: "Courier",
+                fontSize: "14px",
+                color: "#ffffff",
+                align: "right",
+                padding: {
+                    top: 5,
+                    bottom: 5
+                },
+            };
+
+        this.p1Score = 0;
+
+        //UI labels and timers
         this.timeLeftLable = this.add.text(game.config.width-160, 24,"TIME LEFT",this.labelConfig);
         this.timeLeft = this.add.text(game.config.width-160, 54, this.timer.delay, this.scoreConfig);
+
+        this.scoreLabel = this.add.text(69,24,"SCORE",this.labelConfig);
+        this.scoreLeft = this.add.text(69, 54, this.p1Score, this.scoreConfig);
+        
+        //UI controls
+        this.add.text(game.config.width/3, 24,"(↑)/(W) & (↓)/(S) to move",this.labelConfig);
+        this.add.text(game.config.width/3 - 34, 54,"(Spacebar) to fire at the reticule",this.labelConfig);
     }
 
     update() {
         //check for gameOver
         if(this.gameOver) {
+            game.settings.scrollSpeed = 0;
+        }
+        if(this.gameOver && this.canLeave) {
             if(Phaser.Input.Keyboard.JustDown(keyUP)) {
                 this.sound.play("menuSelect");
                 this.scene.restart();
@@ -176,8 +184,8 @@ class Play extends Phaser.Scene {
                 if(mouseDown) {
                     //console.log('target1Hit!');
                     this.targetHit.play();
-                    this.timer.delay+=3000;
-                    this.totalTime+=3;
+                    this.timer.delay+=2000;
+                    this.totalTime+=2;
                     this.tar1.reset();
                     if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
                 }
@@ -187,8 +195,8 @@ class Play extends Phaser.Scene {
                 if(mouseDown) {
                     //console.log('target1Hit!');
                     this.targetHit.play();
-                    this.timer.delay+=3000;
-                    this.totalTime+=3;
+                    this.timer.delay+=2000;
+                    this.totalTime+=2;
                     this.tar2.reset();
                     if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
                 }
@@ -199,35 +207,26 @@ class Play extends Phaser.Scene {
             this.timeLeft.text = Math.round(this.totalTime - this.timer.getElapsedSeconds());
 
             //make sure obs and gates are not overlapping
-            if(this.checkCollision(this.obs1, this.obs2)) {
+            if(this.checkOverlap(this.obs1, this.gate1)) {
+                this.obs1.reset();
+            }
+            if(this.checkOverlap(this.obs1, this.gate2)) {
+                this.obs1.reset();
+            }
+            if(this.checkOverlap(this.obs2, this.gate1)) {
                 this.obs2.reset();
             }
-            if(this.checkCollision(this.obs1, this.obs3)) {
+            if(this.checkOverlap(this.obs2, this.gate2)) {
+                this.obs2.reset();
+            }
+            if(this.checkOverlap(this.obs3, this.gate1)) {
                 this.obs3.reset();
             }
-            if(this.checkCollision(this.obs1, this.gate1)) {
-                this.gate1.reset();
-            }
-            if(this.checkCollision(this.obs1, this.gate2)) {
-                this.gate2.reset();
-            }
-            if(this.checkCollision(this.obs2, this.obs3)) {
+            if(this.checkOverlap(this.obs3, this.gate2)) {
                 this.obs3.reset();
             }
-            if(this.checkCollision(this.obs2, this.gate1)) {
+            if(this.checkOverlap(this.gate1, this.gate2)) {
                 this.gate1.reset();
-            }
-            if(this.checkCollision(this.obs2, this.gate2)) {
-                this.gate2.reset();
-            }
-            if(this.checkCollision(this.obs3, this.gate1)) {
-                this.gate1.reset();
-            }
-            if(this.checkCollision(this.obs3, this.gate2)) {
-                this.gate2.reset();
-            }
-            if(this.checkCollision(this.gate1, this.gate2)) {
-                this.gate2.reset();
             }
 
             //check collisions against player
@@ -280,21 +279,39 @@ class Play extends Phaser.Scene {
     checkCollision(player, other) {
         if(!(other.enabled)) {
             return false;
-        } else if(player.x < other.x + 3*other.width/4 && player.x + 3*player.width/4 > other.x &&
-            player.y < other.y + 3*other.height/4 && player.y + 3*player.height/4 > other.y) {
+        } else if(player.x < other.x + other.width/2 && player.x + player.width/2 > other.x &&
+            player.y < other.y + 2*other.height/3 && player.y + 2*player.height/3 > other.y) {
             return true;
         }
     }
 
+    checkOverlap(one, two) {
+        if(one.x - one.width < two.x + two.width && one.x + one.width > two.x - two.width &&
+            one.y - one.height < two.y + two.height && one.y + one.height > two.y - two.height) {
+            return true;
+        }
+    }
+
+    delayGameOver() {
+        this.music.pause();
+        this.sound.play("GameOver");
+        this.gameOver = true;
+        this.delayGO =  this.time.addEvent({
+            delay:1200,
+            callback: () => {this.displayGameOver()},
+            loop:false,
+            callbackScope:this
+        });
+    }
+
     displayGameOver() {
         //game over screen with options to restart or go back to menu
-        this.music.loop = false;
-        this.gameOver = true;
         this.scoreConfig.fontSize = "48px";
         this.scoreConfig.fixedWidth = 0;
         this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", this.scoreConfig).setOrigin(.5);
         this.scoreConfig.fontSize = "32px";
-        this.playText = this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (↑) to restart the game.", this.scoreConfig).setOrigin(.5).setInteractive();
-        this.playText = this.add.text(game.config.width/2, game.config.height/2 + 128, "Press (↓) to return to the menu.", this.scoreConfig).setOrigin(.5).setInteractive();
+        this.playText = this.add.text(game.config.width/2, game.config.height/2 + 64, "Press (↑) to restart the game.", this.scoreConfig).setOrigin(.5);
+        this.playText = this.add.text(game.config.width/2, game.config.height/2 + 128, "Press (↓) to return to the menu.", this.scoreConfig).setOrigin(.5);
+        this.canLeave = true;
     }
 }
