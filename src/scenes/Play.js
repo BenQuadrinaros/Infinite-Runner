@@ -4,15 +4,20 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        //load up all assets and animations
+        //load images
         this.load.image('skyBG','./assets/SkyBackground.png');
         this.load.image('treeBG','./assets/treeBackgrounLayer.png');
         this.load.image('mountainBG','./assets/mountainBackgrounLayer.png');
         this.load.image('snowGround','./assets/snowLayer.png');
         this.load.image('player','./assets/player.png');
-        this.load.image('obstacle','./assets/obstacle.png');
+        this.load.image('rock','./assets/rock.png');
+        this.load.image('stump','./assets/stump.png');
         this.load.image('gate','./assets/slalomGate.png');
         this.load.image('target','./assets/target.png');
+
+        //load animations
+        this.load.image('gunShotAnim', './assets/playerShootAnim.png')
+        this.load.image('targetBreakAnim', './assets/TargetBreakAnim.png')
 
         //load audio
         //this.load.audio("sfx_select", "./assets/blip_select12.wav");
@@ -27,7 +32,6 @@ class Play extends Phaser.Scene {
     create() {
         game.input.mouse.capture = true;
         this.faster = 50;
-        game.settings.scrollSpeed = 0;
         this.singleClick = 0;
         this.mouseDown = false;
 
@@ -56,14 +60,14 @@ class Play extends Phaser.Scene {
         keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         //place assets into the scene
-        this.obs1 = new Obstacle(this,0,0,'obstacle').setOrigin(0,0);
+        this.obs1 = new Obstacle(this,0,0,'rock').setOrigin(0,0);
         this.obs1.setScale(3, 1.5);
         this.obs1.reset();
-        this.obs2 = new Obstacle(this,0,0,'obstacle').setOrigin(0,0);
+        this.obs2 = new Obstacle(this,0,0,'stump').setOrigin(0,0);
         this.obs2.setScale(1.75, 2);
         this.obs2.reset();
         this.obs2.x += 45 + Math.round(Math.random() * 25);
-        this.obs3 = new Obstacle(this,0,0,'obstacle').setOrigin(0,0);
+        this.obs3 = new Obstacle(this,0,0,'rock').setOrigin(0,0);
         this.obs3.setScale(2.75, 2.5);
         this.obs3.reset();
         this.obs2.x += 120 + Math.round(Math.random() * 45);
@@ -139,6 +143,12 @@ class Play extends Phaser.Scene {
         this.add.rectangle(game.config.width/2 + game.config.width/4,200,10,10,0xFACADE).setOrigin(0,0);
         console.log(game.config.width/2 + ", " + (game.config.width/2 + game.config.width/4));
 
+        //fading controls
+        this.labelConfig.color = "0x000";
+        this.upperControl = this.add.text(50, game.config.height - 150, "(↑)/(W)", this.labelConfig);
+        this.lowerControl = this.add.text(50, game.config.height - 50, "(↓)/(S)", this.labelConfig);
+        this.forwardControl = this.add.text(100, game.config.height - 100, "(Spacebar) to fire", this.labelConfig);
+
     }
 
     update() {
@@ -162,6 +172,9 @@ class Play extends Phaser.Scene {
                 game.settings.scrollSpeed += .5;
             }
             this.music.rate = 1 + (game.settings.scrollSpeed / 100);
+            this.upperControl.alpha -= .002;
+            this.lowerControl.alpha -= .002;
+            this.forwardControl.alpha -= .002;
 
             this.skyBG.tilePositionX += game.settings.scrollSpeed/4;
             this.mountainBG.tilePositionX += game.settings.scrollSpeed/2;
@@ -177,25 +190,14 @@ class Play extends Phaser.Scene {
             this.tar1.update();
             this.tar2.update();
 
-            //manage mouse clicks and targets shot
-            if(game.input.mousePointer.isDown){
-                this.singleClick++;
-            } else {
-                this.singleClick = 0;
-                mouseDown = true;
-            }
-            if(this.singleClick == 1) {
-                this.sound.play("ShotFired");
-            }
-
             if (Phaser.Input.Keyboard.JustDown(keySpace)){
+                this.sound.play("ShotFired");
                 if (this.tar1.x < game.config.width/2 + game.config.width/4 && this.tar1.x > game.config.width/2 + game.config.width/8){
-                            this.targetHit.play();
-                            this.timer.delay+=2000;
-                            this.totalTime+=2;
-                            this.tar1.reset();
-                            if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
-
+                    this.targetHit.play();
+                    this.timer.delay+=2000;
+                    this.totalTime+=2;
+                    this.tar1.reset();
+                    if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
                 }
 
                 if (this.tar2.x < game.config.width/2 + game.config.width/4 && this.tar2.x > game.config.width/2+ game.config.width/8){
@@ -204,9 +206,7 @@ class Play extends Phaser.Scene {
                     this.totalTime+=2;
                     this.tar2.reset();
                     if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
-
                 }
-
             }
 
             //update timer
@@ -286,7 +286,7 @@ class Play extends Phaser.Scene {
         if(!(other.enabled)) {
             return false;
         } else if(player.x < other.x + other.width/2 && player.x + player.width/2 > other.x &&
-            player.y < other.y + 2*other.height/3 && player.y + 2*player.height/3 > other.y) {
+            player.y < other.y + other.height && player.y + 2*player.height/3 > other.y) {
             return true;
         }
     }

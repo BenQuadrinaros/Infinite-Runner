@@ -16,9 +16,10 @@ class Target extends Phaser.GameObjects.Sprite {
     }
 
     reset() {
-        this.y = 200.0;
+        this.y = 180.0;
         this.x = game.config.width + Math.round(Math.random() * 200);
         this.enabled = true;
+        this.alpha = 1;
     }
 
 
