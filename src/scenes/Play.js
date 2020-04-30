@@ -16,8 +16,8 @@ class Play extends Phaser.Scene {
         this.load.image('target','./assets/target.png');
 
         //load animations
-        this.load.image('gunShotAnim', './assets/playerShootAnim.png')
-        this.load.image('targetBreakAnim', './assets/TargetBreakAnim.png')
+        this.load.image('gunShotAnim', './assets/playerShootAnim.png',{frameWidth:64, frameHeight:32,startFrame:0, endFrame:0});
+        this.load.image('targetBreakAnim', './assets/TargetBreakAnim.png');
 
         //load audio
         //this.load.audio("sfx_select", "./assets/blip_select12.wav");
@@ -34,6 +34,8 @@ class Play extends Phaser.Scene {
         this.faster = 50;
         this.singleClick = 0;
         this.mouseDown = false;
+
+        //make anims
 
         //place backgrounds
         //this.starfield = this.add.tileSprite(0,0,640,480,"starfield").setOrigin(0,0);
@@ -152,6 +154,7 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+
         //check for gameOver
         if(this.gameOver) {
             game.settings.scrollSpeed = 0;
@@ -181,7 +184,11 @@ class Play extends Phaser.Scene {
             this.treeBG.tilePositionX += game.settings.scrollSpeed;
             this.snow.tilePositionX += game.settings.scrollSpeed;
 
+            let gunShot = this.add.sprite(this.p1.x,this.p1.y-15,"gunShotAnim").setOrigin(0,0);
+            gunShot.alpha = 0;
             this.p1.update();
+            gunShot.y = this.p1.y-15;
+
             this.obs1.update();
             this.obs2.update();
             this.obs3.update();
@@ -190,9 +197,22 @@ class Play extends Phaser.Scene {
             this.tar1.update();
             this.tar2.update();
 
+
+
+
+
             if (Phaser.Input.Keyboard.JustDown(keySpace)){
+                 gunShot.alpha = 1;
                 this.sound.play("ShotFired");
+                setTimeout(function () {
+                    spriteDestroy(gunShot);
+                },200);
+
                 if (this.tar1.x < game.config.width/2 + game.config.width/4 && this.tar1.x > game.config.width/2 + game.config.width/8){
+                    let t1Break = this.add.sprite(this.tar1.x-5,this.tar1.y-10,"targetBreakAnim").setOrigin(0,0);
+                    setTimeout(function () {
+                        spriteDestroy(t1Break)
+                    },200);
                     this.targetHit.play();
                     this.timer.delay+=2000;
                     this.totalTime+=2;
@@ -201,13 +221,21 @@ class Play extends Phaser.Scene {
                 }
 
                 if (this.tar2.x < game.config.width/2 + game.config.width/4 && this.tar2.x > game.config.width/2+ game.config.width/8){
+                    let t2Break = this.add.sprite(this.tar2.x-5,this.tar2.y-10,"targetBreakAnim").setOrigin(0,0);
+                    setTimeout(function () {
+                        spriteDestroy(t2Break)
+                    },200);
                     this.targetHit.play();
                     this.timer.delay+=2000;
                     this.totalTime+=2;
                     this.tar2.reset();
                     if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
                 }
+
             }
+
+
+
 
             //update timer
             this.timeLeft.text = Math.round(this.totalTime - this.timer.getElapsedSeconds());
@@ -320,4 +348,11 @@ class Play extends Phaser.Scene {
         this.playText = this.add.text(game.config.width/2, game.config.height/2 + 128, "Press (↓) to return to the menu.", this.scoreConfig).setOrigin(.5);
         this.canLeave = true;
     }
+
+
+
+}
+
+function spriteDestroy(sprite){
+    sprite.destroy()
 }
