@@ -15,6 +15,6 @@ game.settings = {
 };
 
 //reserve some keyboard variables
-let keyUP, keyDOWN, keyW, keyS;
+let keyUP, keyDOWN, keyW, keyS, keySpace;
 let mouseDown = false;
 //need left mouse click
