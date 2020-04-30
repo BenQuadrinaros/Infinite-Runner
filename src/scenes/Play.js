@@ -37,7 +37,7 @@ class Play extends Phaser.Scene {
         this.mountainBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'mountainBG').setOrigin(0,0).setScale(1.5,1.2);
         this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'treeBG').setOrigin(0,0).setScale(1.28,1.28);
         this.snow = this.add.tileSprite(0,25,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(2.1,3.8);
-        
+
         //start up looping background music
         this.music = this.sound.add("music");
         this.music.loop = true;
@@ -53,7 +53,8 @@ class Play extends Phaser.Scene {
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        
+        keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
         //place assets into the scene
         this.obs1 = new Obstacle(this,0,0,'obstacle').setOrigin(0,0);
         this.obs1.setScale(3, 1.5);
@@ -74,10 +75,10 @@ class Play extends Phaser.Scene {
         this.gate2.reset();
         this.gate2.x += 90 + Math.round(Math.random() * 100);
 
-        this.tar1 = new Target(this,0,0,'target',0,1).setOrigin(0,0).setInteractive();
+        this.tar1 = new Target(this,0,0,'target',0,1).setOrigin(0,0);
         this.tar1.reset();
 
-        this.tar2 = new Target(this,0,0,'target',0,0).setOrigin(0,0).setInteractive();
+        this.tar2 = new Target(this,0,0,'target',0,0).setOrigin(0,0);
         this.tar2.reset();
         //player object
         this.p1 = new Player(this,40,game.config.height-100,'player').setOrigin(0,0);
@@ -97,7 +98,7 @@ class Play extends Phaser.Scene {
         //add top-border for UI
         this.add.rectangle(0,0,640,110,0x151565).setOrigin(0,0);
         this.scoreConfig = {
-            fontFamily: "Courier", 
+            fontFamily: "Courier",
             fontSize: "28px",
             backgroundColor: "#A0A0A0",
             color: "#1010B5",
@@ -128,10 +129,16 @@ class Play extends Phaser.Scene {
 
         this.scoreLabel = this.add.text(69,24,"SCORE",this.labelConfig);
         this.scoreLeft = this.add.text(69, 54, this.p1Score, this.scoreConfig);
-        
+
         //UI controls
         this.add.text(game.config.width/3, 24,"(↑)/(W) & (↓)/(S) to move",this.labelConfig);
         this.add.text(game.config.width/3 - 34, 54,"(Spacebar) to fire at the reticule",this.labelConfig);
+
+
+        this.add.rectangle(game.config.width/2 + game.config.width/8,200,10,10,0xFACADE).setOrigin(0,0);
+        this.add.rectangle(game.config.width/2 + game.config.width/4,200,10,10,0xFACADE).setOrigin(0,0);
+        console.log(game.config.width/2 + ", " + (game.config.width/2 + game.config.width/4));
+
     }
 
     update() {
@@ -180,28 +187,27 @@ class Play extends Phaser.Scene {
             if(this.singleClick == 1) {
                 this.sound.play("ShotFired");
             }
-            this.tar1.on('pointerdown',() =>{
-                if(mouseDown) {
-                    //console.log('target1Hit!');
-                    this.targetHit.play();
-                    this.timer.delay+=2000;
-                    this.totalTime+=2;
-                    this.tar1.reset();
-                    if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
+
+            if (Phaser.Input.Keyboard.JustDown(keySpace)){
+                if (this.tar1.x < game.config.width/2 + game.config.width/4 && this.tar1.x > game.config.width/2 + game.config.width/8){
+                            this.targetHit.play();
+                            this.timer.delay+=2000;
+                            this.totalTime+=2;
+                            this.tar1.reset();
+                            if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
+
                 }
-                mouseDown = false;
-            });
-            this.tar2.on('pointerdown',() =>{
-                if(mouseDown) {
-                    //console.log('target1Hit!');
+
+                if (this.tar2.x < game.config.width/2 + game.config.width/4 && this.tar2.x > game.config.width/2+ game.config.width/8){
                     this.targetHit.play();
                     this.timer.delay+=2000;
                     this.totalTime+=2;
                     this.tar2.reset();
                     if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
+
                 }
-                mouseDown = false;
-            });
+
+            }
 
             //update timer
             this.timeLeft.text = Math.round(this.totalTime - this.timer.getElapsedSeconds());

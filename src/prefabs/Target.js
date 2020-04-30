@@ -7,28 +7,17 @@ class Target extends Phaser.GameObjects.Sprite {
     }
 
     update() {
-        if (this.tarType === 0) {
+
             this.x -= game.settings.scrollSpeed * .7;
-            if (this.x <= -this.width - 20) {
+            if (this.x <= game.config.width/2) {
                 this.reset();
             }
-        }
-        if (this.tarType === 1) {
-            this.x -= game.settings.scrollSpeed * .7;
-            if (this.y > game.config.height / 4) {
-                this.y -= game.settings.scrollSpeed * .1;
-            }else if (this.y < game.config.height / 2 + game.config.height/8) {
-                this.y += game.settings.scrollSpeed * .1;
-            }
-            if (this.x <= -this.width - 20) {
-                this.reset();
-            }
-        }
+
     }
 
     reset() {
-        this.y = Math.round(game.config.height/4 + (Math.random() * game.config.height / 4));
-        this.x = game.config.width + Math.round(Math.random() * 60);
+        this.y = 200.0;
+        this.x = game.config.width + Math.round(Math.random() * 200);
         this.enabled = true;
     }
 
