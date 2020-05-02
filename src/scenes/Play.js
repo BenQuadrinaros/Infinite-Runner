@@ -63,14 +63,11 @@ class Play extends Phaser.Scene {
 
         //place assets into the scene
         this.obs1 = new Obstacle(this,0,0,'rock').setOrigin(0,0);
-        this.obs1.setScale(3, 1.5);
         this.obs1.reset();
         this.obs2 = new Obstacle(this,0,0,'stump').setOrigin(0,0);
-        this.obs2.setScale(1.75, 2);
         this.obs2.reset();
         this.obs2.x += 45 + Math.round(Math.random() * 25);
         this.obs3 = new Obstacle(this,0,0,'rock').setOrigin(0,0);
-        this.obs3.setScale(2.75, 2.5);
         this.obs3.reset();
         this.obs2.x += 120 + Math.round(Math.random() * 45);
         this.gate1 = new Gate(this,0,0,'gate').setOrigin(0,0);
@@ -87,7 +84,7 @@ class Play extends Phaser.Scene {
         this.tar2 = new Target(this,0,0,'target',0,0).setOrigin(0,0);
         this.tar2.reset();
         //player object
-        this.p1 = new Player(this,40,game.config.height-100,'player').setOrigin(0,0);
+        this.p1 = new Player(this,40,game.config.height-200,'player').setOrigin(0,0);
 
         //game timer and game over
         this.gameOver = false;
@@ -147,9 +144,9 @@ class Play extends Phaser.Scene {
 
         //fading controls
         this.labelConfig.color = "0x000";
-        this.upperControl = this.add.text(50, game.config.height - 150, "(↑)/(W)", this.labelConfig);
-        this.lowerControl = this.add.text(50, game.config.height - 50, "(↓)/(S)", this.labelConfig);
-        this.forwardControl = this.add.text(100, game.config.height - 100, "(Spacebar) to fire", this.labelConfig);
+        this.upperControl = this.add.text(50, game.config.height - 300, "(↑)/(W)", this.labelConfig);
+        this.lowerControl = this.add.text(50, game.config.height - 100, "(↓)/(S)", this.labelConfig);
+        this.forwardControl = this.add.text(100, game.config.height - 200, "(Spacebar) to fire", this.labelConfig);
 
     }
 
@@ -162,10 +159,21 @@ class Play extends Phaser.Scene {
         if(this.gameOver && this.canLeave) {
             if(Phaser.Input.Keyboard.JustDown(keyUP)) {
                 this.sound.play("menuSelect");
-                this.scene.restart();
+                this.time.addEvent({
+                    delay:1300,
+                    callback: () => {this.scene.restart();},
+                    loop:false,
+                    callbackScope:this
+                });
             } else if (Phaser.Input.Keyboard.JustDown(keyDOWN)) {
                 this.sound.play("menuSelect");
-                this.scene.start("menuScene");
+                this.sound.play("menuSelect");
+                this.time.addEvent({
+                    delay:1300,
+                    callback: () => {this.scene.start("menuScene");},
+                    loop:false,
+                    callbackScope:this
+                });
             }
         } else {
             //update everything in game
@@ -197,17 +205,18 @@ class Play extends Phaser.Scene {
             this.tar1.update();
             this.tar2.update();
 
-
-
-
-
             if (Phaser.Input.Keyboard.JustDown(keySpace)){
-                 gunShot.alpha = 1;
+                this.p1.moveable = false;
+                gunShot.alpha = 1;
                 this.sound.play("ShotFired");
-                setTimeout(function () {
-                    spriteDestroy(gunShot);
-                },200);
-
+                this.animTimer =  this.time.addEvent({
+                    delay:200,
+                    callback: () => {
+                        spriteDestroy(gunShot);
+                        this.p1.moveable = true; },
+                    loop:false,
+                    callbackScope:this
+                });
                 if (this.tar1.x < game.config.width/2 + game.config.width/4 && this.tar1.x > game.config.width/2 + game.config.width/8){
                     let t1Break = this.add.sprite(this.tar1.x-5,this.tar1.y-10,"targetBreakAnim").setOrigin(0,0);
                     setTimeout(function () {
@@ -231,21 +240,26 @@ class Play extends Phaser.Scene {
                     this.tar2.reset();
                     if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
                 }
-
             }
-
-
-
 
             //update timer
             this.timeLeft.text = Math.round(this.totalTime - this.timer.getElapsedSeconds());
 
             //make sure obs and gates are not overlapping
+            if(this.checkOverlap(this.obs1, this.obs2)) {
+                this.obs1.reset();
+            }
+            if(this.checkOverlap(this.obs1, this.obs3)) {
+                this.obs1.reset();
+            }
             if(this.checkOverlap(this.obs1, this.gate1)) {
                 this.obs1.reset();
             }
             if(this.checkOverlap(this.obs1, this.gate2)) {
                 this.obs1.reset();
+            }
+            if(this.checkOverlap(this.obs2, this.obs3)) {
+                this.obs2.reset();
             }
             if(this.checkOverlap(this.obs2, this.gate1)) {
                 this.obs2.reset();
@@ -327,6 +341,7 @@ class Play extends Phaser.Scene {
     }
 
     delayGameOver() {
+        game.settings.scrollSpeed = 0;
         this.music.pause();
         this.sound.play("GameOver");
         this.gameOver = true;
@@ -348,9 +363,6 @@ class Play extends Phaser.Scene {
         this.playText = this.add.text(game.config.width/2, game.config.height/2 + 128, "Press (↓) to return to the menu.", this.scoreConfig).setOrigin(.5);
         this.canLeave = true;
     }
-
-
-
 }
 
 function spriteDestroy(sprite){

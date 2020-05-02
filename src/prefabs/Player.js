@@ -1,4 +1,6 @@
 class Player extends Phaser.GameObjects.Sprite {
+    
+    moveable = true;
 
     constructor(scene,x,y,texture,frame) {
         super(scene,x,y,texture,frame);
@@ -7,17 +9,17 @@ class Player extends Phaser.GameObjects.Sprite {
 
     update(){
         //w or up Arrow - move up
-        if (keyUP.isDown || keyW.isDown){
+        if ((keyUP.isDown || keyW.isDown) && this.moveable){
             //make sure player stays in bottom half of screen
-            if (this.y >game.config.height/2 + 30){
+            if (this.y > game.config.width/3){
             //move player up
              this.y-=game.settings.scrollSpeed/2;
             }
         }
         //s key or down arrow - move down
-        if (keyDOWN.isDown || keyS.isDown){
+        if ((keyDOWN.isDown || keyS.isDown) && this.moveable){
             //make sure player does not go off screen
-            if (this.y<=game.config.height-30){
+            if (this.y<=game.config.height - this.height){
                 this.y+=game.settings.scrollSpeed/2;
             }
         }
