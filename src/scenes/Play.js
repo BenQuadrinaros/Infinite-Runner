@@ -39,10 +39,10 @@ class Play extends Phaser.Scene {
 
         //place backgrounds
         //this.starfield = this.add.tileSprite(0,0,640,480,"starfield").setOrigin(0,0);
-        this.skyBG = this.add.tileSprite(0,0,640,480,'skyBG').setOrigin(0,0).setScale(1.5,.9);
-        this.mountainBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'mountainBG').setOrigin(0,0).setScale(1.5,1.2);
-        this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'treeBG').setOrigin(0,0).setScale(1.28,1.28);
-        this.snow = this.add.tileSprite(0,25,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(2.1,3.8);
+        this.skyBG = this.add.tileSprite(0,0,640,480,'skyBG').setOrigin(0,0);
+        this.mountainBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'mountainBG').setOrigin(0,0);
+        this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'treeBG').setOrigin(0,0);
+        this.snow = this.add.tileSprite(0,10,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(1,4);
 
         //start up looping background music
         this.music = this.sound.add("music");
@@ -71,10 +71,8 @@ class Play extends Phaser.Scene {
         this.obs3.reset();
         this.obs2.x += 120 + Math.round(Math.random() * 45);
         this.gate1 = new Gate(this,0,0,'gate').setOrigin(0,0);
-        this.gate1.setScale(3, 1.5);
         this.gate1.reset();
         this.gate2 = new Gate(this,0,0,'gate').setOrigin(0,0);
-        this.gate2.setScale(3, 1.5);
         this.gate2.reset();
         this.gate2.x += 90 + Math.round(Math.random() * 100);
 
@@ -84,7 +82,7 @@ class Play extends Phaser.Scene {
         this.tar2 = new Target(this,0,0,'target',0,0).setOrigin(0,0);
         this.tar2.reset();
         //player object
-        this.p1 = new Player(this,40,game.config.height-200,'player').setOrigin(0,0);
+        this.p1 = new Player(this,40,2*game.config.height/3,'player').setOrigin(0,0);
 
         //game timer and game over
         this.gameOver = false;
@@ -99,7 +97,7 @@ class Play extends Phaser.Scene {
         });
 
         //add top-border for UI
-        this.add.rectangle(0,0,640,110,0x151565).setOrigin(0,0);
+        //this.add.rectangle(0,0,640,110,0x151565).setOrigin(0,0);
         this.scoreConfig = {
             fontFamily: "Courier",
             fontSize: "28px",
@@ -116,7 +114,7 @@ class Play extends Phaser.Scene {
             {
                 fontFamily: "Courier",
                 fontSize: "14px",
-                color: "#ffffff",
+                color: "#000",
                 align: "right",
                 padding: {
                     top: 5,
@@ -137,16 +135,17 @@ class Play extends Phaser.Scene {
         this.add.text(game.config.width/3, 24,"(↑)/(W) & (↓)/(S) to move",this.labelConfig);
         this.add.text(game.config.width/3 - 34, 54,"(Spacebar) to fire at the reticule",this.labelConfig);
 
-
+        //REPLACE WITH ASSETS
+        //aiming reticule
         this.add.rectangle(game.config.width/2 + game.config.width/8,200,10,10,0xFACADE).setOrigin(0,0);
         this.add.rectangle(game.config.width/2 + game.config.width/4,200,10,10,0xFACADE).setOrigin(0,0);
         console.log(game.config.width/2 + ", " + (game.config.width/2 + game.config.width/4));
+        //REPLACE WITH ASSETS
 
         //fading controls
-        this.labelConfig.color = "0x000";
-        this.upperControl = this.add.text(50, game.config.height - 300, "(↑)/(W)", this.labelConfig);
-        this.lowerControl = this.add.text(50, game.config.height - 100, "(↓)/(S)", this.labelConfig);
-        this.forwardControl = this.add.text(100, game.config.height - 200, "(Spacebar) to fire", this.labelConfig);
+        this.upperControl = this.add.text(50, 4*game.config.height/7, "(↑)/(W)", this.labelConfig);
+        this.lowerControl = this.add.text(50, 6*game.config.height/7, "(↓)/(S)", this.labelConfig);
+        this.forwardControl = this.add.text(100, 5*game.config.height/7, "(Spacebar) to fire", this.labelConfig);
 
     }
 
@@ -177,6 +176,7 @@ class Play extends Phaser.Scene {
             }
         } else {
             //update everything in game
+            if(game.settings.scrollSpeed < 1 && this.faster > 50) {this.faster = 50;}
             this.faster--;
             if(this.faster <= 0) {
              this.faster = 500;
@@ -209,6 +209,8 @@ class Play extends Phaser.Scene {
                 this.p1.moveable = false;
                 gunShot.alpha = 1;
                 this.sound.play("ShotFired");
+                game.settings.scrollSpeed -= 0.25;
+                if(game.settings.scrollSpeed <= 0) {game.settings.scrollSpeed = 0;}
                 this.animTimer =  this.time.addEvent({
                     delay:200,
                     callback: () => {
@@ -223,10 +225,10 @@ class Play extends Phaser.Scene {
                         spriteDestroy(t1Break)
                     },200);
                     this.targetHit.play();
-                    this.timer.delay+=2000;
-                    this.totalTime+=2;
+                    this.timer.delay+=3000;
+                    this.totalTime+=3;
                     this.tar1.reset();
-                    if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
+                    if(game.settings.scrollSpeed <= 3) {game.settings.scrollSpeed += .5;}
                 }
 
                 if (this.tar2.x < game.config.width/2 + game.config.width/4 && this.tar2.x > game.config.width/2+ game.config.width/8){
@@ -235,10 +237,10 @@ class Play extends Phaser.Scene {
                         spriteDestroy(t2Break)
                     },200);
                     this.targetHit.play();
-                    this.timer.delay+=2000;
-                    this.totalTime+=2;
+                    this.timer.delay+=3000;
+                    this.totalTime+=3;
                     this.tar2.reset();
-                    if(game.settings.scrollSpeed <= 2) {game.settings.scrollSpeed += .5;}
+                    if(game.settings.scrollSpeed <= 3) {game.settings.scrollSpeed += .5;}
                 }
             }
 
@@ -285,7 +287,7 @@ class Play extends Phaser.Scene {
                 this.totalTime-=5;
                 this.obs1.enabled = false;
                 //console.log("hit obs1");
-                game.settings.scrollSpeed -= 2;
+                game.settings.scrollSpeed -= 1.5;
                 if(game.settings.scrollSpeed < 0) {game.settings.scrollSpeed = 0;}
             }
             if(this.checkCollision(this.p1, this.obs2)) {
@@ -295,7 +297,7 @@ class Play extends Phaser.Scene {
                 this.totalTime-=5;
                 this.obs2.enabled = false;
                 //console.log("hit obs2");
-                game.settings.scrollSpeed -= 2;
+                game.settings.scrollSpeed -= 1.5;
                 if(game.settings.scrollSpeed < 0) {game.settings.scrollSpeed = 0;}
             }
             if(this.checkCollision(this.p1, this.obs3)) {
@@ -327,8 +329,8 @@ class Play extends Phaser.Scene {
     checkCollision(player, other) {
         if(!(other.enabled)) {
             return false;
-        } else if(player.x < other.x + other.width/2 && player.x + player.width/2 > other.x &&
-            player.y < other.y + other.height && player.y + 2*player.height/3 > other.y) {
+        } else if(player.x + player.width/2 < other.x + other.width/2 && player.x + player.width > other.x + other.width/10 &&
+            player.y < other.y + other.height/2 && player.y + 3*player.height/4 > other.y) {
             return true;
         }
     }
