@@ -1,4 +1,14 @@
-//Ben Rowland
+/*
+Mark Medved, Ben Rowland, and Thane Wisherop
+Alpine Adventure - Biathlon Infinite Skier
+Completed on May 3, 2020
+
+Technically Interesting - Implemented single mouse clicks for menu control
+(was previously part of the game until playtesting). All music was created
+by Ben Rowland using the Bosca Ceoil sound program (https://boscaceoil.net/).
+Blizzard effect helps create a balancing loop by punishing faster players
+with worse vision conditions and clearing up for slower players.
+*/
 
 let config = {
     type: Phaser.CANVAS,

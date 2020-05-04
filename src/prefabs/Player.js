@@ -11,7 +11,7 @@ class Player extends Phaser.GameObjects.Sprite {
         //w or up Arrow - move up
         if ((keyUP.isDown || keyW.isDown) && this.moveable){
             //make sure player stays in bottom half of screen
-            if (this.y > game.config.width/3){
+            if (this.y > game.config.width/3 + 20){
             //move player up
              this.y-=game.settings.scrollSpeed/2;
             }

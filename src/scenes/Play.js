@@ -41,8 +41,8 @@ class Play extends Phaser.Scene {
         //this.starfield = this.add.tileSprite(0,0,640,480,"starfield").setOrigin(0,0);
         this.skyBG = this.add.tileSprite(0,0,640,480,'skyBG').setOrigin(0,0);
         this.mountainBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'mountainBG').setOrigin(0,0);
-        this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2,'treeBG').setOrigin(0,0);
         this.snow = this.add.tileSprite(0,10,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(1,4);
+        this.treeBG = this.add.tileSprite(0,0,game.config.width,game.config.height/2 + 50,'treeBG').setOrigin(0,0);
 
         //start up looping background music
         this.music = this.sound.add("music");
@@ -83,6 +83,9 @@ class Play extends Phaser.Scene {
         this.tar2.reset();
         //player object
         this.p1 = new Player(this,40,2*game.config.height/3,'player').setOrigin(0,0);
+        
+        this.blizzard = this.add.tileSprite(0,-game.config.height,game.config.width,game.config.height,'snowGround').setOrigin(0,0).setScale(1,8);
+        this.blizzard.alpha = 0;
 
         //game timer and game over
         this.gameOver = false;
@@ -146,7 +149,6 @@ class Play extends Phaser.Scene {
         this.upperControl = this.add.text(50, 4*game.config.height/7, "(↑)/(W)", this.labelConfig);
         this.lowerControl = this.add.text(50, 6*game.config.height/7, "(↓)/(S)", this.labelConfig);
         this.forwardControl = this.add.text(100, 5*game.config.height/7, "(Spacebar) to fire", this.labelConfig);
-
     }
 
     update() {
@@ -182,6 +184,11 @@ class Play extends Phaser.Scene {
              this.faster = 500;
                 game.settings.scrollSpeed += .5;
             }
+            if(game.settings.scrollSpeed >= 4.5 && this.blizzard.alpha < .6) {
+                this.blizzard.alpha += .001;
+            } else if(this.blizzard.alpha > 0) {
+                this.blizzard.alpha -= .005;
+            }
             this.music.rate = 1 + (game.settings.scrollSpeed / 100);
             this.upperControl.alpha -= .002;
             this.lowerControl.alpha -= .002;
@@ -191,6 +198,7 @@ class Play extends Phaser.Scene {
             this.mountainBG.tilePositionX += game.settings.scrollSpeed/2;
             this.treeBG.tilePositionX += game.settings.scrollSpeed;
             this.snow.tilePositionX += game.settings.scrollSpeed;
+            this.blizzard.tilePositionX += 2*game.settings.scrollSpeed;
 
             let gunShot = this.add.sprite(this.p1.x,this.p1.y-15,"gunShotAnim").setOrigin(0,0);
             gunShot.alpha = 0;
@@ -205,11 +213,10 @@ class Play extends Phaser.Scene {
             this.tar1.update();
             this.tar2.update();
 
-            if (Phaser.Input.Keyboard.JustDown(keySpace)){
+            if (Phaser.Input.Keyboard.JustDown(keySpace) && this.p1.moveable){
                 this.p1.moveable = false;
                 gunShot.alpha = 1;
                 this.sound.play("ShotFired");
-                game.settings.scrollSpeed -= 0.25;
                 if(game.settings.scrollSpeed <= 0) {game.settings.scrollSpeed = 0;}
                 this.animTimer =  this.time.addEvent({
                     delay:200,
@@ -225,7 +232,7 @@ class Play extends Phaser.Scene {
                         spriteDestroy(t1Break)
                     },200);
                     this.targetHit.play();
-                    this.timer.delay+=3000;
+                    this.timer.delay+=2500;
                     this.totalTime+=3;
                     this.tar1.reset();
                     if(game.settings.scrollSpeed <= 3) {game.settings.scrollSpeed += .5;}
@@ -237,7 +244,7 @@ class Play extends Phaser.Scene {
                         spriteDestroy(t2Break)
                     },200);
                     this.targetHit.play();
-                    this.timer.delay+=3000;
+                    this.timer.delay+=2500;
                     this.totalTime+=3;
                     this.tar2.reset();
                     if(game.settings.scrollSpeed <= 3) {game.settings.scrollSpeed += .5;}
