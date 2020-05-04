@@ -5,7 +5,7 @@ class Instructions extends Phaser.Scene {
 
     preload() {
         this.load.image('player','./assets/player.png');
-        this.load.image('obstacle','./assets/obstacle.png');
+        this.load.image('obstacle','./assets/stump.png');
         this.load.image('gate','./assets/slalomGate.png');
         this.load.image('target','./assets/target.png');
 
