@@ -172,13 +172,8 @@ class Play extends Phaser.Scene {
         this.add.text(game.config.width / 3, 24, "(↑)/(W) & (↓)/(S) to move", this.labelConfig);
         this.add.text(game.config.width / 3 - 34, 54, "(Spacebar) to fire at the reticle", this.labelConfig);
 
-        //REPLACE WITH ASSETS
         //aiming reticle
-        // this.add.rectangle(game.config.width / 2 + game.config.width / 7, 200, 10, 10, 0xFACADE).setOrigin(0, 0);
-        // this.add.rectangle(game.config.width / 2 + game.config.width / 4.5, 200, 10, 10, 0xFACADE).setOrigin(0, 0);
         this.add.sprite(11*game.config.width/16,200,'reticle').setScale(2,2);
-
-        //REPLACE WITH ASSETS
 
         //fading controls
         this.upperControl = this.add.text(50, 4 * game.config.height / 7, "(↑)/(W)", this.labelConfig);
@@ -240,6 +235,7 @@ class Play extends Phaser.Scene {
             this.lowerControl.alpha -= .002;
             this.forwardControl.alpha -= .002;
 
+            //scroll tiled backgrounds proportional to speed of game
             this.skyBG.tilePositionX += game.settings.scrollSpeed / 4;
             this.mountainBG.tilePositionX += game.settings.scrollSpeed / 2;
             this.treeBG.tilePositionX += game.settings.scrollSpeed;
@@ -265,7 +261,6 @@ class Play extends Phaser.Scene {
                 });
 
                 this.p1.moveable = false;
-                //gunShot.alpha = 1;
                 this.sound.play("ShotFired");
                 if (game.settings.scrollSpeed <= 0) {
                     game.settings.scrollSpeed = 0;
